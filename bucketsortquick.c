@@ -12,7 +12,7 @@ typedef struct
     int *balde;
 } bucket;
 void bucket_sort(int v[], int tam);
-void quicksort(int v[], int p,int r);
+void quicksort(int v[], int p, int r);
 void bucket_sort(int v[], int tam)
 {
     bucket *b = malloc(sizeof(bucket) * num_bucket);
@@ -29,7 +29,7 @@ void bucket_sort(int v[], int tam)
     {
         if (b[i].topo)
         {
-            quicksort(b[i].balde,0, b[i].topo-1);
+            quicksort(b[i].balde, 0, b[i].topo - 1);
         }
     }
     i = 0;
@@ -43,11 +43,12 @@ void bucket_sort(int v[], int tam)
     }
 }
 
-void swap(int *v,int i,int j){
+void swap(int *v, int i, int j)
+{
     int tmp;
     tmp = v[i];
     v[i] = v[j];
-    v[j] = tmp; 
+    v[j] = tmp;
 }
 
 int partition(int A[], int p, int r)
@@ -102,9 +103,24 @@ char *is_sorted(int *v, int N)
     }
     return (r) ? "Yes" : "No";
 }
-int main()
+int main(int argc, char const *argv[])
 {
-    int N = 50000;
+
+    int N;
+    if (argc == 2)
+    {
+        N = atoi(argv[1]);
+    }
+    else if (argc > 2)
+    {
+        printf("Too many arguments supplied.\n");
+        return 1;
+    }
+    else
+    {
+        printf("One argument expected.\n");
+        return 1;
+    }
     int *v;
     v = malloc(sizeof(int) * N);
     random_vector(v, N);
