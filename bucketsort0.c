@@ -11,30 +11,40 @@ typedef struct
     int topo;
     int* balde;
 } bucket;
-void bucket_sort(int v[], int tam);
+void bucket_sort(int v[], int tam); //cabeçalho das funções
 void bubble(int v[], int tam);
 void bucket_sort(int v[], int tam)
 {
-    bucket *b = malloc(sizeof(bucket)*num_bucket);
+    bucket b[num_bucket];
     int i, j, k;
     for (i = 0; i < num_bucket; i++)
         b[i].balde = malloc(sizeof(int)*tam_bucket);
-    for (i = 0; i < num_bucket; i++)
+    
+    /* 1 */ for (i = 0; i < num_bucket; i++) //inicializa todos os "topo"
         b[i].topo = 0;
-    for (i = 0; i < tam; i++)
-    {
-        b[v[i] / max].balde[b[v[i] / max].topo++] = v[i];
-    }
-    for (i = 0; i < num_bucket; i++)
-    {
-        if (b[i].topo > 1)
+    /* 2 */ for (i = 0; i < tam; i++)
+    { //verifica em que balde o elemento deve ficar
+        j = (num_bucket)-1;
+        //b[v[i]/max].balde[b[v[i]/max].topo++] = v[i];
+        while (1)
         {
-            bubble(b[i].balde, b[i].topo);
+            if (j < 0)
+                break;
+            if (v[i] >= j * 10)
+            {
+                b[j].balde[b[j].topo] = v[i];
+                (b[j].topo)++;
+                break;
+            }
+            j--;
         }
     }
+    /* 3 */ for (i = 0; i < num_bucket; i++) //ordena os baldes
+        if (b[i].topo)
+            bubble(b[i].balde, b[i].topo);
     i = 0;
-    for (j = 0; j < num_bucket; j++)
-    {
+    /* 4 */ for (j = 0; j < num_bucket; j++)
+    { //põe os elementos dos baldes de volta no vetor
         for (k = 0; k < b[j].topo; k++)
         {
             v[i] = b[j].balde[k];
@@ -42,7 +52,7 @@ void bucket_sort(int v[], int tam)
         }
     }
 }
-void bubble(int v[], int tam)
+void bubble(int v[], int tam) // 0-9 10-19 20-29
 {
     int i, j, temp, flag;
     if (tam)
@@ -70,7 +80,6 @@ void print_array(int v[], int N)
     {
         printf("%d ", v[i]);
     }
-    printf("\n");
 }
 void random_vector(int *v, int N)
 {
@@ -80,6 +89,7 @@ void random_vector(int *v, int N)
         v[i] = rand() % (max * num_bucket);
     }
 }
+
 char* is_sorted(int *v,int N){
     int r = 1;
     for(int i = 0; i <N-1;i++){
@@ -87,6 +97,7 @@ char* is_sorted(int *v,int N){
     }
     return (r)?"Yes":"No";
 }
+
 int main()
 {
     int N = 50000;
@@ -111,7 +122,5 @@ int main()
     }
     printf("Done!\n");
     printf("Is sorted? %s\n",is_sorted(v,N));
-    //printf("Sorted:\n");
-    //print_array(v, N);
     return 0;
 }
