@@ -5,7 +5,7 @@
 #include "papi.h"
 #define tam_bucket 1000000
 #define num_bucket 100
-#define max 10
+#define max 50
 typedef struct
 {
     int topo;
@@ -14,7 +14,11 @@ typedef struct
 void bucket_sort(int v[], int tam);
 void countSort(int *v,int N);
 
-void bucket_sort(int v[], int tam)
+//#pragma GCC target("arch=znver2")
+//#pragma GCC optimize("tree-vectorize")
+
+
+void bucket_sort(int * __restrict__ v, int tam)
 {
     bucket *b = malloc(sizeof(bucket) * num_bucket);
     int i, j, k;
@@ -22,11 +26,13 @@ void bucket_sort(int v[], int tam)
     for (i = 0; i < num_bucket; i++){
         b[i].balde = malloc(sizeof(int) * tam_bucket);
         b[i].topo = 0;
-}
+    }
+    
     for (i = 0; i < tam; i++)
     {
-        int x = v[i] / max;
-        b[x].balde[b[x].topo++] = v[i];
+        int elem = v[i];
+        int x = elem/ max;
+        b[x].balde[b[x].topo++] = elem;
     }
 
 
@@ -34,7 +40,7 @@ void bucket_sort(int v[], int tam)
     {
         if (b[i].topo > 1)
         {
-            countSort(b[i].balde,  b[i].topo );
+            countSort(b[i].balde, b[i].topo );
         }
     }
 
@@ -49,25 +55,27 @@ void bucket_sort(int v[], int tam)
     }
 }
 
-void countSort(int *v,int N){
+void countSort(int * __restrict__ v,int N){
     int *output = malloc(sizeof(int)*N);
     int i, count[max] = {0} ;
 
-    for (i = 0; i < N; i++)
+    for (i = 0; i < N; i++){
         count[v[i] % max]++;
-
-    for (i = 1; i < max; i++)
-        count[i] += count[i - 1];  
-
-    for (i = N - 1; i >= 0; i--) {
-        output[count[v[i] % max] - 1] = v[i];
-        count[v[i]  % max]--;
     }
-    for (i = 0; i < N; i++)
+    for (i = 0; i < max-1; i++){
+        count[i + 1] += count[i];  
+    }
+
+    for (i = 0; i <N; i++) {
+        output[count[v[i] % max]-1] = v[i];
+        count[v[i] % max]--;
+    }
+    for (i = 0; i < N; i++){
         v[i] = output[i];
+    }
 
 }
-
+/*
 void print_array(int v[], int N)
 {
     int i;
@@ -76,7 +84,7 @@ void print_array(int v[], int N)
         printf("%d ", v[i]);
     }
     printf("\n");
-}
+}*/
 
 void random_vector(int *v, int N)
 {
@@ -108,12 +116,12 @@ int main(int argc, char const *argv[])
     }
     else if (argc > 2)
     {
-        printf("Too many arguments supplied.\n");
+        //printf("Too many arguments supplied.\n");
         return 1;
     }
     else
     {
-        printf("One argument expected.\n");
+        //printf("One argument expected.\n");
         return 1;
     }
     int *v;
@@ -125,14 +133,14 @@ int main(int argc, char const *argv[])
     retval = PAPI_hl_region_begin("computation");
     if (retval != PAPI_OK)
     {
-        printf("Error Begin\n");
+        //printf("Error Begin\n");
         return 1;
     }
     bucket_sort(v, N);
     retval = PAPI_hl_region_end("computation");
     if (retval != PAPI_OK)
     {
-        printf("Error End\n");
+        //printf("Error End\n");
         return 1;
     }
     printf("Done!\n");

@@ -1,0 +1,45 @@
+{
+  "papi_version":"6.0.0.1",
+  "cpu_info":"AMD Ryzen 3 3300X 4-Core Processor",
+  "max_cpu_rate_mhz":"3800",
+  "min_cpu_rate_mhz":"3800",
+  "event_definitions":{
+    "perf::TASK-CLOCK":{
+      "component":"perf_event",
+      "type":"delta"
+    },
+    "PAPI_TOT_INS":{
+      "component":"perf_event",
+      "type":"delta"
+    },
+    "PAPI_TOT_CYC":{
+      "component":"perf_event",
+      "type":"delta"
+    },
+    "PAPI_FP_INS":{
+      "component":"perf_event",
+      "type":"delta"
+    },
+    "PAPI_FP_OPS":{
+      "component":"perf_event",
+      "type":"delta"
+    }
+  },
+  "threads":{
+    "0":{
+      "regions":{
+        "0":{
+          "name":"computation",
+          "parent_region_id":"-1",
+          "cycles":"403116085",
+          "real_time_nsec":"106077657",
+          "perf::TASK-CLOCK":"105743157",
+          "PAPI_TOT_INS":"528244839",
+          "PAPI_TOT_CYC":"292557921",
+          "PAPI_FP_INS":"0",
+          "PAPI_FP_OPS":"0"
+        }
+      }
+    }
+  }
+}

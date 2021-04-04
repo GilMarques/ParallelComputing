@@ -100,7 +100,7 @@ char* is_sorted(int *v,int N){
 
 int main()
 {
-    int N = 50000;
+    int N = 1000000;
     int *v;
     v = malloc(sizeof(int) * N);
     random_vector(v, N);

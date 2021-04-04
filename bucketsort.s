@@ -5,17 +5,18 @@
 bubble.part.0:
 .LFB56:
 	.cfi_startproc
-	cmpl	$1, %esi
+	leal	-1(%rsi), %r10d
+	movq	%rdi, %r9
+	testl	%r10d, %r10d
 	jle	.L1
 	leal	-2(%rsi), %eax
-	leal	-1(%rsi), %r10d
-	xorl	%r9d, %r9d
+	xorl	%r8d, %r8d
 	leaq	4(%rdi,%rax,4), %rsi
 	.p2align 4,,10
 	.p2align 3
 .L5:
-	movq	%rdi, %rax
-	xorl	%r8d, %r8d
+	movq	%r9, %rax
+	xorl	%edi, %edi
 	.p2align 4,,10
 	.p2align 3
 .L4:
@@ -24,16 +25,16 @@ bubble.part.0:
 	cmpl	%edx, %ecx
 	jge	.L3
 	movl	%ecx, (%rax)
-	movl	$1, %r8d
+	movl	$1, %edi
 	movl	%edx, 4(%rax)
 .L3:
 	addq	$4, %rax
-	cmpq	%rax, %rsi
+	cmpq	%rsi, %rax
 	jne	.L4
-	testl	%r8d, %r8d
+	testl	%edi, %edi
 	je	.L1
-	addl	$1, %r9d
-	cmpl	%r10d, %r9d
+	addl	$1, %r8d
+	cmpl	%r10d, %r8d
 	jne	.L5
 .L1:
 	ret
@@ -140,7 +141,7 @@ bucket_sort:
 	jle	.L23
 	movslq	%r9d, %rax
 	movq	8(%r12), %rdi
-	leal	-1(%r8), %esi
+	movslq	%r8d, %rsi
 	leaq	(%rbx,%rax,4), %rcx
 	xorl	%eax, %eax
 	.p2align 4,,10
@@ -148,9 +149,8 @@ bucket_sort:
 .L20:
 	movl	(%rdi,%rax,4), %edx
 	movl	%edx, (%rcx,%rax,4)
-	movq	%rax, %rdx
 	addq	$1, %rax
-	cmpq	%rdx, %rsi
+	cmpq	%rax, %rsi
 	jne	.L20
 	addl	%r8d, %r9d
 .L23:
@@ -273,15 +273,16 @@ random_vector:
 .L42:
 	call	rand@PLT
 	addq	$4, %rbp
-	movslq	%eax, %rdx
-	movl	%eax, %ecx
-	imulq	$1374389535, %rdx, %rdx
+	movl	%eax, %edx
+	cltq
+	imulq	$1374389535, %rax, %rax
+	movl	%edx, %ecx
 	sarl	$31, %ecx
-	sarq	$37, %rdx
-	subl	%ecx, %edx
-	imull	$100, %edx, %edx
-	subl	%edx, %eax
-	movl	%eax, -4(%rbp)
+	sarq	$37, %rax
+	subl	%ecx, %eax
+	imull	$100, %eax, %eax
+	subl	%eax, %edx
+	movl	%edx, -4(%rbp)
 	cmpq	%rbx, %rbp
 	jne	.L42
 	addq	$8, %rsp
@@ -316,22 +317,25 @@ is_sorted:
 	leaq	.LC1(%rip), %rax
 	cmpl	$1, %esi
 	jle	.L48
-	leal	-2(%rsi), %eax
-	xorl	%edx, %edx
-	leaq	4(%rdi,%rax,4), %rcx
-	movl	$1, %eax
+	leal	-2(%rsi), %ecx
+	movl	(%rdi), %edx
+	leaq	4(%rdi), %rax
+	leaq	8(%rdi,%rcx,4), %r8
+	movl	$1, %ecx
+	xorl	%edi, %edi
 	.p2align 4,,10
 	.p2align 3
 .L51:
-	movl	4(%rdi), %esi
-	cmpl	%esi, (%rdi)
-	cmovg	%edx, %eax
-	addq	$4, %rdi
-	cmpq	%rcx, %rdi
+	movl	%edx, %esi
+	movl	(%rax), %edx
+	cmpl	%esi, %edx
+	cmovl	%edi, %ecx
+	addq	$4, %rax
+	cmpq	%r8, %rax
 	jne	.L51
-	testl	%eax, %eax
-	leaq	.LC2(%rip), %rdx
+	testl	%ecx, %ecx
 	leaq	.LC1(%rip), %rax
+	leaq	.LC2(%rip), %rdx
 	cmove	%rdx, %rax
 .L48:
 	ret
@@ -357,105 +361,67 @@ main:
 .LFB55:
 	.cfi_startproc
 	endbr64
-	pushq	%r13
-	.cfi_def_cfa_offset 16
-	.cfi_offset 13, -16
-	movl	$200000, %edi
 	pushq	%r12
-	.cfi_def_cfa_offset 24
-	.cfi_offset 12, -24
+	.cfi_def_cfa_offset 16
+	.cfi_offset 12, -16
+	movl	$4000000, %edi
 	pushq	%rbp
-	.cfi_def_cfa_offset 32
-	.cfi_offset 6, -32
-	pushq	%rbx
-	.cfi_def_cfa_offset 40
-	.cfi_offset 3, -40
+	.cfi_def_cfa_offset 24
+	.cfi_offset 6, -24
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 48
+	.cfi_def_cfa_offset 32
 	call	malloc@PLT
+	movl	$1000000, %esi
+	movq	%rax, %rdi
 	movq	%rax, %rbp
-	movq	%rax, %rbx
-	leaq	200000(%rax), %r12
-	movq	%rax, %r13
-	.p2align 4,,10
-	.p2align 3
-.L56:
-	call	rand@PLT
-	addq	$4, %r13
-	movslq	%eax, %rdx
-	movl	%eax, %ecx
-	imulq	$1374389535, %rdx, %rdx
-	sarl	$31, %ecx
-	sarq	$37, %rdx
-	subl	%ecx, %edx
-	imull	$100, %edx, %edx
-	subl	%edx, %eax
-	movl	%eax, -4(%r13)
-	cmpq	%r12, %r13
-	jne	.L56
+	call	random_vector
 	leaq	.LC3(%rip), %rdi
 	call	PAPI_hl_region_begin@PLT
 	testl	%eax, %eax
-	jne	.L67
-	movl	$50000, %esi
+	jne	.L61
+	movl	$1000000, %esi
 	movq	%rbp, %rdi
 	call	bucket_sort
 	leaq	.LC3(%rip), %rdi
 	call	PAPI_hl_region_end@PLT
 	movl	%eax, %r12d
 	testl	%eax, %eax
-	jne	.L68
+	jne	.L62
 	leaq	.LC6(%rip), %rdi
-	addq	$199996, %rbp
 	call	puts@PLT
-	movl	$1, %eax
-	xorl	%edx, %edx
-	.p2align 4,,10
-	.p2align 3
-.L61:
-	movl	4(%rbx), %esi
-	cmpl	%esi, (%rbx)
-	cmovg	%edx, %eax
-	addq	$4, %rbx
-	cmpq	%rbp, %rbx
-	jne	.L61
-	testl	%eax, %eax
-	leaq	.LC1(%rip), %rdx
-	movl	$1, %edi
-	leaq	.LC2(%rip), %rax
+	movl	$1000000, %esi
+	movq	%rbp, %rdi
+	call	is_sorted
 	leaq	.LC7(%rip), %rsi
-	cmove	%rax, %rdx
+	movl	$1, %edi
+	movq	%rax, %rdx
 	xorl	%eax, %eax
 	call	__printf_chk@PLT
-.L55:
+.L56:
 	addq	$8, %rsp
 	.cfi_remember_state
-	.cfi_def_cfa_offset 40
-	movl	%r12d, %eax
-	popq	%rbx
-	.cfi_def_cfa_offset 32
-	popq	%rbp
 	.cfi_def_cfa_offset 24
-	popq	%r12
+	movl	%r12d, %eax
+	popq	%rbp
 	.cfi_def_cfa_offset 16
-	popq	%r13
+	popq	%r12
 	.cfi_def_cfa_offset 8
 	ret
-.L68:
+.L62:
 	.cfi_restore_state
 	leaq	.LC5(%rip), %rdi
 	movl	$1, %r12d
 	call	puts@PLT
-	jmp	.L55
-.L67:
+	jmp	.L56
+.L61:
 	leaq	.LC4(%rip), %rdi
 	movl	$1, %r12d
 	call	puts@PLT
-	jmp	.L55
+	jmp	.L56
 	.cfi_endproc
 .LFE55:
 	.size	main, .-main
-	.ident	"GCC: (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0"
+	.ident	"GCC: (Ubuntu 10.2.0-13ubuntu1) 10.2.0"
 	.section	.note.GNU-stack,"",@progbits
 	.section	.note.gnu.property,"a"
 	.align 8
