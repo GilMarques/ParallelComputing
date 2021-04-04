@@ -1,0 +1,10 @@
+{
+    "computation": {
+        "Region count": 1,
+        "Real time in s": 0.01,
+        "CPU time in s": 0.01,
+        "IPC": 1.92,
+        "MFLIPS/s": 0.0,
+        "MFLOPS/s": 0.0
+    }
+}
