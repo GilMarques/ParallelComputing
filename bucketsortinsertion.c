@@ -3,18 +3,22 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "papi.h"
-#define tam_bucket 100000
-#define num_bucket 10000
-#define max 10
+#define tam_bucket 100 
+#define num_bucket 1000000
+#define max 1024
 typedef struct
 {
     int topo;
     int *balde;
 } bucket;
 void bucket_sort(int v[], int tam);
-void quicksort(int v[], int p, int r);
+void insertionSort(int *v,int N);
 
-void bucket_sort(int v[], int tam)
+#pragma GCC target("arch=znver2")
+#pragma GCC optimize("tree-vectorize")
+
+
+void bucket_sort(int * __restrict__ v, int tam)
 {
     bucket *b = malloc(sizeof(bucket) * num_bucket);
     int i, j, k;
@@ -22,11 +26,13 @@ void bucket_sort(int v[], int tam)
     for (i = 0; i < num_bucket; i++){
         b[i].balde = malloc(sizeof(int) * tam_bucket);
         b[i].topo = 0;
-}
+    }
+    
     for (i = 0; i < tam; i++)
     {
-        int x = v[i] / max;
-        b[x].balde[b[x].topo++] = v[i];
+        int elem = v[i];
+        int x = elem/ max;
+        b[x].balde[b[x].topo++] = elem; 
     }
 
 
@@ -34,7 +40,7 @@ void bucket_sort(int v[], int tam)
     {
         if (b[i].topo > 1)
         {
-            quicksort(b[i].balde, 0, b[i].topo - 1);
+            insertionSort(b[i].balde, b[i].topo);
         }
     }
 
@@ -47,41 +53,33 @@ void bucket_sort(int v[], int tam)
             i++;
         }
     }
+    
+    /*int sum = 0;
+    for (j = 0; j < num_bucket; j++){
+        sum += b[j].topo;
+    }
+    printf("%d\n",sum/num_bucket);*/
+    
 }
 
-void swap(int *v, int i, int j)
+void insertionSort(int* __restrict__ arr, int n)
 {
-    int tmp;
-    tmp = v[i];
-    v[i] = v[j];
-    v[j] = tmp;
-}
-
-int partition(int A[], int p, int r)
-{
-    int x, i, j;
-    x = A[r];
-    i = p - 1;
-    for (j = p; j < r; j++)
-        if (A[j] <= x)
-        {
-            i++;
-            swap(A, i, j);
+    int i, key, j;
+    for (i = 1; i < n; i++) {
+        key = arr[i];
+        j = i - 1;
+ 
+        /* Move elements of arr[0..i-1], that are
+          greater than key, to one position ahead
+          of their current position */
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
         }
-    swap(A, i + 1, r);
-    return i + 1;
-}
-
-void quicksort(int A[], int p, int r)
-{
-    if (p < r)
-    {
-        int q = partition(A, p, r);
-        quicksort(A, p, q - 1);
-        quicksort(A, q + 1, r);
+        arr[j + 1] = key;
     }
 }
-
+/*
 void print_array(int v[], int N)
 {
     int i;
@@ -90,7 +88,7 @@ void print_array(int v[], int N)
         printf("%d ", v[i]);
     }
     printf("\n");
-}
+}*/
 
 void random_vector(int *v, int N)
 {
@@ -122,12 +120,12 @@ int main(int argc, char const *argv[])
     }
     else if (argc > 2)
     {
-        printf("Too many arguments supplied.\n");
+        //printf("Too many arguments supplied.\n");
         return 1;
     }
     else
     {
-        printf("One argument expected.\n");
+        //printf("One argument expected.\n");
         return 1;
     }
     int *v;
@@ -139,18 +137,18 @@ int main(int argc, char const *argv[])
     retval = PAPI_hl_region_begin("computation");
     if (retval != PAPI_OK)
     {
-        printf("Error Begin\n");
+        //printf("Error Begin\n");
         return 1;
     }
     bucket_sort(v, N);
     retval = PAPI_hl_region_end("computation");
     if (retval != PAPI_OK)
     {
-        printf("Error End\n");
+        //printf("Error End\n");
         return 1;
     }
-    printf("Done!\n");
-    printf("Is sorted? %s\n", is_sorted(v, N));
+     //   printf("Done!\n");
+    //printf("Is sorted? %s\n", is_sorted(v, N));
     //printf("Sorted:\n");
     //print_array(v, N);
     return 0;

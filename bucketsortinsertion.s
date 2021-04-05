@@ -1,131 +1,49 @@
-	.file	"bucketsortradix.c"
+	.file	"bucketsortinsertion.c"
 	.text
 	.p2align 4
-	.globl	countSort
-	.type	countSort, @function
-countSort:
+	.globl	insertionSort
+	.type	insertionSort, @function
+insertionSort:
 .LFB51:
 	.cfi_startproc
 	endbr64
-	pushq	%r12
-	.cfi_def_cfa_offset 16
-	.cfi_offset 12, -16
-	pushq	%rbp
-	.cfi_def_cfa_offset 24
-	.cfi_offset 6, -24
-	pushq	%rbx
-	.cfi_def_cfa_offset 32
-	.cfi_offset 3, -32
-	leaq	-397312(%rsp), %r11
-	.cfi_def_cfa 11, 397344
-.LPSRL0:
-	subq	$4096, %rsp
-	orq	$0, (%rsp)
-	cmpq	%r11, %rsp
-	jne	.LPSRL0
-	.cfi_def_cfa_register 7
-	subq	$2704, %rsp
-	.cfi_def_cfa_offset 400048
-	movq	%fs:40, %rax
-	movq	%rax, 400008(%rsp)
-	xorl	%eax, %eax
-	movq	%rdi, %r12
-	movslq	%esi, %rdi
-	movq	%rdi, %rbx
-	salq	$2, %rdi
-	call	malloc@PLT
-	xorl	%esi, %esi
-	movq	%rsp, %rdi
-	movl	$400000, %edx
-	movq	%rax, %rbp
-	call	memset@PLT
-	testl	%ebx, %ebx
-	jle	.L2
-	leal	-1(%rbx), %eax
-	movq	%r12, %rdx
-	leaq	4(%r12,%rax,4), %rdi
-	.p2align 4,,10
-	.p2align 3
-.L3:
-	movslq	(%rdx), %rax
-	addq	$4, %rdx
-	movq	%rax, %rcx
-	imulq	$351843721, %rax, %rax
-	movl	%ecx, %esi
-	sarl	$31, %esi
-	sarq	$45, %rax
-	subl	%esi, %eax
-	imull	$100000, %eax, %esi
-	movl	%ecx, %eax
-	subl	%esi, %eax
-	cltq
-	addl	$1, (%rsp,%rax,4)
-	cmpq	%rdx, %rdi
-	jne	.L3
-.L2:
-	leaq	4(%rsp), %rax
-	leaq	400000(%rsp), %rcx
-	.p2align 4,,10
-	.p2align 3
-.L4:
-	movl	-4(%rax), %edx
-	addl	%edx, (%rax)
-	addq	$4, %rax
-	cmpq	%rax, %rcx
-	jne	.L4
-	testl	%ebx, %ebx
-	jle	.L5
-	leal	-1(%rbx), %eax
-	movq	%r12, %rsi
-	leaq	4(%r12,%rax,4), %r8
+	movq	%rdi, %r11
+	cmpl	$1, %esi
+	jle	.L10
+	leaq	4(%rdi), %r8
+	leal	-1(%rsi), %r10d
+	xorl	%r9d, %r9d
 	.p2align 4,,10
 	.p2align 3
 .L6:
-	movslq	(%rsi), %rax
-	addq	$4, %rsi
+	leaq	0(,%r9,4), %rax
+	leaq	-4(%r8), %rsi
+	movl	(%r8), %edi
+	subq	%rax, %rsi
+	movq	%r8, %rax
+	.p2align 4,,10
+	.p2align 3
+.L3:
+	movl	-4(%rax), %edx
 	movq	%rax, %rcx
-	imulq	$351843721, %rax, %rax
-	movl	%ecx, %edx
-	sarl	$31, %edx
-	sarq	$45, %rax
-	subl	%edx, %eax
-	imull	$100000, %eax, %edx
-	movl	%ecx, %eax
-	subl	%edx, %eax
-	cltq
-	movslq	(%rsp,%rax,4), %rdi
-	movq	%rdi, %rdx
-	movl	%ecx, -4(%rbp,%rdi,4)
-	subl	$1, %edx
-	movl	%edx, (%rsp,%rax,4)
-	cmpq	%r8, %rsi
+	cmpl	%edi, %edx
+	jle	.L4
+	movl	%edx, (%rax)
+	leaq	-4(%rcx), %rax
+	cmpq	%rax, %rsi
+	jne	.L3
+	movq	%r11, %rcx
+.L4:
+	addq	$1, %r9
+	movl	%edi, (%rcx)
+	addq	$4, %r8
+	cmpq	%r10, %r9
 	jne	.L6
-	movl	%ebx, %edx
-	movq	%rbp, %rsi
-	movq	%r12, %rdi
-	salq	$2, %rdx
-	call	memcpy@PLT
-.L5:
-	movq	400008(%rsp), %rax
-	subq	%fs:40, %rax
-	jne	.L14
-	addq	$400016, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 32
-	movq	%rbp, %rdi
-	popq	%rbx
-	.cfi_def_cfa_offset 24
-	popq	%rbp
-	.cfi_def_cfa_offset 16
-	popq	%r12
-	.cfi_def_cfa_offset 8
-	jmp	free@PLT
-.L14:
-	.cfi_restore_state
-	call	__stack_chk_fail@PLT
+.L10:
+	ret
 	.cfi_endproc
 .LFE51:
-	.size	countSort, .-countSort
+	.size	insertionSort, .-insertionSort
 	.p2align 4
 	.globl	bucket_sort
 	.type	bucket_sort, @function
@@ -141,7 +59,7 @@ bucket_sort:
 	.cfi_def_cfa_offset 24
 	.cfi_offset 14, -24
 	movq	%rdi, %r14
-	movl	$160000, %edi
+	movl	$16000000, %edi
 	pushq	%r13
 	.cfi_def_cfa_offset 32
 	.cfi_offset 13, -32
@@ -159,61 +77,59 @@ bucket_sort:
 	call	malloc@PLT
 	movq	%rax, %r12
 	movq	%rax, %rbp
-	leaq	160000(%rax), %r13
+	leaq	16000000(%rax), %r13
 	movq	%rax, %rbx
 	.p2align 4,,10
 	.p2align 3
-.L16:
-	movl	$400000, %edi
+.L13:
+	movl	$400, %edi
 	addq	$16, %rbx
 	call	malloc@PLT
 	movl	$0, -16(%rbx)
 	movq	%rax, -8(%rbx)
 	cmpq	%rbx, %r13
-	jne	.L16
+	jne	.L13
 	testl	%r15d, %r15d
-	jle	.L20
+	jle	.L17
 	leal	-1(%r15), %eax
-	movq	%r14, %rcx
+	movq	%r14, %rsi
 	leaq	4(%r14,%rax,4), %rdi
-.L18:
-	movslq	(%rcx), %rax
-	addq	$4, %rcx
-	movq	%rax, %rsi
-	imulq	$351843721, %rax, %rax
-	movl	%esi, %edx
-	sarl	$31, %edx
-	sarq	$45, %rax
-	subl	%edx, %eax
+.L15:
+	movl	(%rsi), %ecx
+	testl	%ecx, %ecx
+	leal	1023(%rcx), %eax
+	cmovns	%ecx, %eax
+	addq	$4, %rsi
+	sarl	$10, %eax
 	cltq
 	salq	$4, %rax
 	addq	%r12, %rax
 	movslq	(%rax), %rdx
 	movq	8(%rax), %r8
 	leal	1(%rdx), %r9d
-	movl	%esi, (%r8,%rdx,4)
+	movl	%ecx, (%r8,%rdx,4)
 	movl	%r9d, (%rax)
-	cmpq	%rcx, %rdi
-	jne	.L18
+	cmpq	%rsi, %rdi
+	jne	.L15
 	.p2align 4,,10
 	.p2align 3
-.L20:
+.L17:
 	movl	(%r12), %esi
 	cmpl	$1, %esi
-	jle	.L19
+	jle	.L16
 	movq	8(%r12), %rdi
-	call	countSort
-.L19:
+	call	insertionSort
+.L16:
 	addq	$16, %r12
 	cmpq	%r13, %r12
-	jne	.L20
+	jne	.L17
 	xorl	%r12d, %r12d
 	.p2align 4,,10
 	.p2align 3
-.L21:
+.L18:
 	movl	0(%rbp), %ebx
 	testl	%ebx, %ebx
-	jle	.L24
+	jle	.L21
 	movslq	%r12d, %rax
 	movq	8(%rbp), %rsi
 	movslq	%ebx, %rdx
@@ -221,10 +137,10 @@ bucket_sort:
 	leaq	(%r14,%rax,4), %rdi
 	salq	$2, %rdx
 	call	memcpy@PLT
-.L24:
+.L21:
 	addq	$16, %rbp
 	cmpq	%rbp, %r13
-	jne	.L21
+	jne	.L18
 	addq	$8, %rsp
 	.cfi_def_cfa_offset 56
 	popq	%rbx
@@ -251,7 +167,7 @@ random_vector:
 	.cfi_startproc
 	endbr64
 	testl	%esi, %esi
-	jle	.L36
+	jle	.L33
 	pushq	%rbp
 	.cfi_def_cfa_offset 16
 	.cfi_offset 6, -16
@@ -265,21 +181,21 @@ random_vector:
 	.cfi_def_cfa_offset 32
 	.p2align 4,,10
 	.p2align 3
-.L32:
+.L29:
 	call	rand@PLT
 	addq	$4, %rbp
 	movl	%eax, %edx
 	cltq
-	imulq	$1152921505, %rax, %rax
+	imulq	$1125899907, %rax, %rax
 	movl	%edx, %ecx
 	sarl	$31, %ecx
 	sarq	$60, %rax
 	subl	%ecx, %eax
-	imull	$1000000000, %eax, %eax
+	imull	$1024000000, %eax, %eax
 	subl	%eax, %edx
 	movl	%edx, -4(%rbp)
 	cmpq	%rbx, %rbp
-	jne	.L32
+	jne	.L29
 	addq	$8, %rsp
 	.cfi_def_cfa_offset 24
 	popq	%rbx
@@ -289,7 +205,7 @@ random_vector:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L36:
+.L33:
 	.cfi_restore 3
 	.cfi_restore 6
 	ret
@@ -312,10 +228,10 @@ is_sorted:
 	leal	-1(%rsi), %ecx
 	leaq	.LC1(%rip), %rax
 	testl	%ecx, %ecx
-	jle	.L39
+	jle	.L36
 	subl	$2, %esi
 	cmpl	$6, %esi
-	jbe	.L49
+	jbe	.L46
 	movl	%ecx, %edx
 	vmovdqa	.LC0(%rip), %ymm3
 	movq	%rdi, %rax
@@ -324,7 +240,7 @@ is_sorted:
 	addq	%rdi, %rdx
 	.p2align 4,,10
 	.p2align 3
-.L42:
+.L39:
 	vmovdqu	(%rax), %xmm4
 	vmovdqu	4(%rax), %xmm5
 	addq	$32, %rax
@@ -333,7 +249,7 @@ is_sorted:
 	vpcmpgtd	%ymm2, %ymm1, %ymm1
 	vpandn	%ymm3, %ymm1, %ymm3
 	cmpq	%rax, %rdx
-	jne	.L42
+	jne	.L39
 	vextracti128	$0x1, %ymm3, %xmm0
 	movl	%ecx, %r8d
 	vpminsd	%xmm3, %xmm0, %xmm0
@@ -345,14 +261,14 @@ is_sorted:
 	vpminsd	%xmm1, %xmm0, %xmm0
 	vmovd	%xmm0, %edx
 	cmpl	%r8d, %ecx
-	je	.L54
+	je	.L51
 	vzeroupper
-.L41:
+.L38:
 	movl	%ecx, %r9d
 	subl	%r8d, %esi
 	subl	%r8d, %r9d
 	cmpl	$2, %esi
-	jbe	.L44
+	jbe	.L41
 	movl	%r8d, %esi
 	vmovd	%edx, %xmm6
 	vmovdqu	(%rdi,%rsi,4), %xmm1
@@ -369,36 +285,36 @@ is_sorted:
 	vpminsd	%xmm1, %xmm0, %xmm0
 	vmovd	%xmm0, %edx
 	cmpl	%esi, %r9d
-	je	.L43
-.L44:
+	je	.L40
+.L41:
 	cltq
 	xorl	%esi, %esi
 	.p2align 4,,10
 	.p2align 3
-.L47:
+.L44:
 	movl	4(%rdi,%rax,4), %r10d
 	cmpl	%r10d, (%rdi,%rax,4)
 	cmovg	%esi, %edx
 	addq	$1, %rax
 	cmpl	%eax, %ecx
-	jg	.L47
-.L43:
+	jg	.L44
+.L40:
 	testl	%edx, %edx
 	leaq	.LC1(%rip), %rax
 	leaq	.LC2(%rip), %rdx
 	cmove	%rdx, %rax
-.L39:
+.L36:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L54:
+.L51:
 	vzeroupper
-	jmp	.L43
-.L49:
+	jmp	.L40
+.L46:
 	xorl	%r8d, %r8d
 	xorl	%eax, %eax
 	movl	$1, %edx
-	jmp	.L41
+	jmp	.L38
 	.cfi_endproc
 .LFE53:
 	.size	is_sorted, .-is_sorted
@@ -414,10 +330,10 @@ main:
 	.cfi_startproc
 	endbr64
 	cmpl	$2, %edi
-	je	.L56
+	je	.L53
 	movl	$1, %eax
 	ret
-.L56:
+.L53:
 	pushq	%r12
 	.cfi_def_cfa_offset 16
 	.cfi_offset 12, -16
@@ -439,9 +355,9 @@ main:
 	leaq	.LC3(%rip), %rdi
 	call	PAPI_hl_region_begin@PLT
 	testl	%eax, %eax
-	je	.L62
+	je	.L59
 	movl	$1, %eax
-.L55:
+.L52:
 	popq	%rdx
 	.cfi_remember_state
 	.cfi_def_cfa_offset 24
@@ -450,7 +366,7 @@ main:
 	popq	%r12
 	.cfi_def_cfa_offset 8
 	ret
-.L62:
+.L59:
 	.cfi_restore_state
 	movl	%ebp, %esi
 	movq	%r12, %rdi
@@ -460,7 +376,7 @@ main:
 	testl	%eax, %eax
 	setne	%al
 	movzbl	%al, %eax
-	jmp	.L55
+	jmp	.L52
 	.cfi_endproc
 .LFE54:
 	.size	main, .-main
