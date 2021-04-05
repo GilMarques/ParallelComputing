@@ -4,7 +4,7 @@
 #include <limits.h>
 #include "papi.h"
 #define tam_bucket 1000000
-#define num_bucket 10
+#define num_bucket 100
 #define max 10
 typedef struct
 {
@@ -23,7 +23,9 @@ void bucket_sort(int v[], int tam)
         b[i].topo = 0;
     for (i = 0; i < tam; i++)
     {
-        b[v[i] / max].balde[b[v[i] / max].topo++] = v[i];
+        int elem = v[i];
+        int x = elem/ max;
+        b[x].balde[b[x].topo++] = elem;
     }
     for (i = 0; i < num_bucket; i++)
     {
@@ -89,7 +91,7 @@ char* is_sorted(int *v,int N){
 }
 int main()
 {
-    int N = 1000000;
+    int N = 100000;
     int *v;
     v = malloc(sizeof(int) * N);
     random_vector(v, N);

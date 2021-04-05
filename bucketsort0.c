@@ -4,8 +4,8 @@
 #include <limits.h>
 #include "papi.h"
 #define tam_bucket 1000000
-#define num_bucket 1000
-#define max 100
+#define num_bucket 100
+#define max 10
 typedef struct
 {
     int topo;

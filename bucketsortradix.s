@@ -74,7 +74,7 @@ countSort:
 	cmpq	%rax, %rcx
 	jne	.L4
 	testl	%ebx, %ebx
-	jle	.L1
+	jle	.L5
 	leal	-1(%rbx), %eax
 	movq	%r12, %rsi
 	leaq	4(%r12,%rax,4), %r8
@@ -101,37 +101,25 @@ countSort:
 	cmpq	%r8, %rsi
 	jne	.L6
 	movl	%ebx, %edx
-	salq	$2, %rdx
-	movq	40008(%rsp), %rax
-	subq	%fs:40, %rax
-	jne	.L14
-	addq	$40016, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 32
 	movq	%rbp, %rsi
 	movq	%r12, %rdi
-	popq	%rbx
-	.cfi_def_cfa_offset 24
-	popq	%rbp
-	.cfi_def_cfa_offset 16
-	popq	%r12
-	.cfi_def_cfa_offset 8
-	jmp	memcpy@PLT
-.L1:
-	.cfi_restore_state
+	salq	$2, %rdx
+	call	memcpy@PLT
+.L5:
 	movq	40008(%rsp), %rax
 	subq	%fs:40, %rax
 	jne	.L14
 	addq	$40016, %rsp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 32
+	movq	%rbp, %rdi
 	popq	%rbx
 	.cfi_def_cfa_offset 24
 	popq	%rbp
 	.cfi_def_cfa_offset 16
 	popq	%r12
 	.cfi_def_cfa_offset 8
-	ret
+	jmp	free@PLT
 .L14:
 	.cfi_restore_state
 	call	__stack_chk_fail@PLT
@@ -175,20 +163,20 @@ bucket_sort:
 	movq	%rax, %rbx
 	.p2align 4,,10
 	.p2align 3
-.L17:
+.L16:
 	movl	$4000, %edi
 	addq	$16, %rbx
 	call	malloc@PLT
 	movl	$0, -16(%rbx)
 	movq	%rax, -8(%rbx)
 	cmpq	%rbx, %r13
-	jne	.L17
+	jne	.L16
 	testl	%r15d, %r15d
-	jle	.L21
+	jle	.L20
 	leal	-1(%r15), %eax
 	movq	%r14, %rcx
 	leaq	4(%r14,%rax,4), %rdi
-.L19:
+.L18:
 	movslq	(%rcx), %rax
 	addq	$4, %rcx
 	movq	%rax, %rsi
@@ -206,26 +194,26 @@ bucket_sort:
 	movl	%esi, (%r8,%rdx,4)
 	movl	%r9d, (%rax)
 	cmpq	%rcx, %rdi
-	jne	.L19
+	jne	.L18
 	.p2align 4,,10
 	.p2align 3
-.L21:
+.L20:
 	movl	(%r12), %esi
 	cmpl	$1, %esi
-	jle	.L20
+	jle	.L19
 	movq	8(%r12), %rdi
 	call	countSort
-.L20:
+.L19:
 	addq	$16, %r12
 	cmpq	%r13, %r12
-	jne	.L21
+	jne	.L20
 	xorl	%r12d, %r12d
 	.p2align 4,,10
 	.p2align 3
-.L22:
+.L21:
 	movl	0(%rbp), %ebx
 	testl	%ebx, %ebx
-	jle	.L25
+	jle	.L24
 	movslq	%r12d, %rax
 	movq	8(%rbp), %rsi
 	movslq	%ebx, %rdx
@@ -233,10 +221,10 @@ bucket_sort:
 	leaq	(%r14,%rax,4), %rdi
 	salq	$2, %rdx
 	call	memcpy@PLT
-.L25:
+.L24:
 	addq	$16, %rbp
 	cmpq	%rbp, %r13
-	jne	.L22
+	jne	.L21
 	addq	$8, %rsp
 	.cfi_def_cfa_offset 56
 	popq	%rbx
@@ -263,7 +251,7 @@ random_vector:
 	.cfi_startproc
 	endbr64
 	testl	%esi, %esi
-	jle	.L37
+	jle	.L36
 	pushq	%rbp
 	.cfi_def_cfa_offset 16
 	.cfi_offset 6, -16
@@ -277,7 +265,7 @@ random_vector:
 	.cfi_def_cfa_offset 32
 	.p2align 4,,10
 	.p2align 3
-.L33:
+.L32:
 	call	rand@PLT
 	addq	$4, %rbp
 	movl	%eax, %edx
@@ -291,7 +279,7 @@ random_vector:
 	subl	%eax, %edx
 	movl	%edx, -4(%rbp)
 	cmpq	%rbx, %rbp
-	jne	.L33
+	jne	.L32
 	addq	$8, %rsp
 	.cfi_def_cfa_offset 24
 	popq	%rbx
@@ -301,7 +289,7 @@ random_vector:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L37:
+.L36:
 	.cfi_restore 3
 	.cfi_restore 6
 	ret
@@ -324,10 +312,10 @@ is_sorted:
 	leal	-1(%rsi), %ecx
 	leaq	.LC1(%rip), %rax
 	testl	%ecx, %ecx
-	jle	.L40
+	jle	.L39
 	subl	$2, %esi
 	cmpl	$6, %esi
-	jbe	.L50
+	jbe	.L49
 	movl	%ecx, %edx
 	vmovdqa	.LC0(%rip), %ymm3
 	movq	%rdi, %rax
@@ -336,7 +324,7 @@ is_sorted:
 	addq	%rdi, %rdx
 	.p2align 4,,10
 	.p2align 3
-.L43:
+.L42:
 	vmovdqu	(%rax), %xmm4
 	vmovdqu	4(%rax), %xmm5
 	addq	$32, %rax
@@ -345,7 +333,7 @@ is_sorted:
 	vpcmpgtd	%ymm2, %ymm1, %ymm1
 	vpandn	%ymm3, %ymm1, %ymm3
 	cmpq	%rax, %rdx
-	jne	.L43
+	jne	.L42
 	vextracti128	$0x1, %ymm3, %xmm0
 	movl	%ecx, %r8d
 	vpminsd	%xmm3, %xmm0, %xmm0
@@ -357,14 +345,14 @@ is_sorted:
 	vpminsd	%xmm1, %xmm0, %xmm0
 	vmovd	%xmm0, %edx
 	cmpl	%r8d, %ecx
-	je	.L55
+	je	.L54
 	vzeroupper
-.L42:
+.L41:
 	movl	%ecx, %r9d
 	subl	%r8d, %esi
 	subl	%r8d, %r9d
 	cmpl	$2, %esi
-	jbe	.L45
+	jbe	.L44
 	movl	%r8d, %esi
 	vmovd	%edx, %xmm6
 	vmovdqu	(%rdi,%rsi,4), %xmm1
@@ -381,36 +369,36 @@ is_sorted:
 	vpminsd	%xmm1, %xmm0, %xmm0
 	vmovd	%xmm0, %edx
 	cmpl	%esi, %r9d
-	je	.L44
-.L45:
+	je	.L43
+.L44:
 	cltq
 	xorl	%esi, %esi
 	.p2align 4,,10
 	.p2align 3
-.L48:
+.L47:
 	movl	4(%rdi,%rax,4), %r10d
 	cmpl	%r10d, (%rdi,%rax,4)
 	cmovg	%esi, %edx
 	addq	$1, %rax
 	cmpl	%eax, %ecx
-	jg	.L48
-.L44:
+	jg	.L47
+.L43:
 	testl	%edx, %edx
 	leaq	.LC1(%rip), %rax
 	leaq	.LC2(%rip), %rdx
 	cmove	%rdx, %rax
-.L40:
+.L39:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L55:
+.L54:
 	vzeroupper
-	jmp	.L44
-.L50:
+	jmp	.L43
+.L49:
 	xorl	%r8d, %r8d
 	xorl	%eax, %eax
 	movl	$1, %edx
-	jmp	.L42
+	jmp	.L41
 	.cfi_endproc
 .LFE53:
 	.size	is_sorted, .-is_sorted
@@ -426,10 +414,10 @@ main:
 	.cfi_startproc
 	endbr64
 	cmpl	$2, %edi
-	je	.L57
+	je	.L56
 	movl	$1, %eax
 	ret
-.L57:
+.L56:
 	pushq	%r12
 	.cfi_def_cfa_offset 16
 	.cfi_offset 12, -16
@@ -451,9 +439,9 @@ main:
 	leaq	.LC3(%rip), %rdi
 	call	PAPI_hl_region_begin@PLT
 	testl	%eax, %eax
-	je	.L63
+	je	.L62
 	movl	$1, %eax
-.L56:
+.L55:
 	popq	%rdx
 	.cfi_remember_state
 	.cfi_def_cfa_offset 24
@@ -462,7 +450,7 @@ main:
 	popq	%r12
 	.cfi_def_cfa_offset 8
 	ret
-.L63:
+.L62:
 	.cfi_restore_state
 	movl	%ebp, %esi
 	movq	%r12, %rdi
@@ -472,7 +460,7 @@ main:
 	testl	%eax, %eax
 	setne	%al
 	movzbl	%al, %eax
-	jmp	.L56
+	jmp	.L55
 	.cfi_endproc
 .LFE54:
 	.size	main, .-main

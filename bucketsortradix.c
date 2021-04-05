@@ -73,6 +73,7 @@ void countSort(int * __restrict__ v,int N){
     for (i = 0; i < N; i++){
         v[i] = output[i];
     }
+    free(output);
 
 }
 /*
