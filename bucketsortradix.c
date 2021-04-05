@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "papi.h"
-#define tam_bucket 1000
-#define num_bucket 100000
-#define max 10000
+#define tam_bucket 100000
+#define num_bucket 10000
+#define max 100000
 typedef struct
 {
     int topo;
@@ -53,6 +53,11 @@ void bucket_sort(int * __restrict__ v, int tam)
             i++;
         }
     }
+    /*int sum = 0;
+    for (j = 0; j < num_bucket; j++){
+        sum += b[j].topo;
+    }
+    printf("%d\n",sum/num_bucket);*/
 }
 
 void countSort(int * __restrict__ v,int N){
