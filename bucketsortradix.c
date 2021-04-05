@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "papi.h"
-#define tam_bucket 1000000
-#define num_bucket 100
-#define max 50
+#define tam_bucket 1000
+#define num_bucket 100000
+#define max 10000
 typedef struct
 {
     int topo;
@@ -14,8 +14,8 @@ typedef struct
 void bucket_sort(int v[], int tam);
 void countSort(int *v,int N);
 
-//#pragma GCC target("arch=znver2")
-//#pragma GCC optimize("tree-vectorize")
+#pragma GCC target("arch=znver2")
+#pragma GCC optimize("tree-vectorize")
 
 
 void bucket_sort(int * __restrict__ v, int tam)
@@ -143,8 +143,8 @@ int main(int argc, char const *argv[])
         //printf("Error End\n");
         return 1;
     }
-    printf("Done!\n");
-    printf("Is sorted? %s\n", is_sorted(v, N));
+    //printf("Done!\n");
+    //printf("Is sorted? %s\n", is_sorted(v, N));
     //printf("Sorted:\n");
     //print_array(v, N);
     return 0;

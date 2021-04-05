@@ -4,8 +4,8 @@
 #include <limits.h>
 #include "papi.h"
 #define tam_bucket 1000000
-#define num_bucket 10
-#define max 10
+#define num_bucket 1000
+#define max 100
 typedef struct
 {
     int topo;
@@ -100,7 +100,7 @@ char* is_sorted(int *v,int N){
 
 int main()
 {
-    int N = 1000000;
+    int N = 100000;
     int *v;
     v = malloc(sizeof(int) * N);
     random_vector(v, N);
