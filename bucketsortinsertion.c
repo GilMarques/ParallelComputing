@@ -4,8 +4,8 @@
 #include <limits.h>
 #include "papi.h"
 #define tam_bucket 1000
-#define num_bucket 200
-#define max 1000
+#define num_bucket 2000
+#define max 10
 typedef struct
 {
     int topo;
@@ -14,8 +14,8 @@ typedef struct
 void bucket_sort(int * __restrict__ v, int tam);
 void insertionSort(int *__restrict__v,int N);
 
-//#pragma GCC target("arch=znver2")
-//#pragma GCC optimize("tree-vectorize")
+#pragma GCC target("arch=znver2")
+#pragma GCC optimize("tree-vectorize")
 
 
 void bucket_sort(int * __restrict__ v, int tam)

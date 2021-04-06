@@ -4,7 +4,7 @@
 #include <limits.h>
 #include "papi.h"
 #define tam_bucket 1000
-#define num_bucket 5000
+#define num_bucket 2000
 #define max 10
 typedef struct
 {
