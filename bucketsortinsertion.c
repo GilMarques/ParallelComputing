@@ -3,19 +3,19 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "papi.h"
-#define tam_bucket 100 
-#define num_bucket 1000000
-#define max 1024
+#define tam_bucket 1000
+#define num_bucket 200
+#define max 1000
 typedef struct
 {
     int topo;
     int *balde;
 } bucket;
-void bucket_sort(int v[], int tam);
-void insertionSort(int *v,int N);
+void bucket_sort(int * __restrict__ v, int tam);
+void insertionSort(int *__restrict__v,int N);
 
-#pragma GCC target("arch=znver2")
-#pragma GCC optimize("tree-vectorize")
+//#pragma GCC target("arch=znver2")
+//#pragma GCC optimize("tree-vectorize")
 
 
 void bucket_sort(int * __restrict__ v, int tam)
@@ -31,7 +31,7 @@ void bucket_sort(int * __restrict__ v, int tam)
     for (i = 0; i < tam; i++)
     {
         int elem = v[i];
-        int x = elem/ max;
+        int x = elem/max;
         b[x].balde[b[x].topo++] = elem; 
     }
 
@@ -68,10 +68,6 @@ void insertionSort(int* __restrict__ arr, int n)
     for (i = 1; i < n; i++) {
         key = arr[i];
         j = i - 1;
- 
-        /* Move elements of arr[0..i-1], that are
-          greater than key, to one position ahead
-          of their current position */
         while (j >= 0 && arr[j] > key) {
             arr[j + 1] = arr[j];
             j = j - 1;

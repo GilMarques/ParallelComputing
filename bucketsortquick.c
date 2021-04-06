@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "papi.h"
-#define tam_bucket 100000
-#define num_bucket 10000
+#define tam_bucket 1000
+#define num_bucket 5000
 #define max 10
 typedef struct
 {

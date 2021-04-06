@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "papi.h"
-#define tam_bucket 1000000
-#define num_bucket 100
+#define tam_bucket 100
+#define num_bucket 100000
 #define max 10
 typedef struct
 {
@@ -17,10 +17,10 @@ void bucket_sort(int v[], int tam)
 {
     bucket *b = malloc(sizeof(bucket)*num_bucket);
     int i, j, k;
-    for (i = 0; i < num_bucket; i++)
+    for (i = 0; i < num_bucket; i++){
         b[i].balde = malloc(sizeof(int)*tam_bucket);
-    for (i = 0; i < num_bucket; i++)
         b[i].topo = 0;
+    }
     for (i = 0; i < tam; i++)
     {
         int elem = v[i];
@@ -91,7 +91,7 @@ char* is_sorted(int *v,int N){
 }
 int main()
 {
-    int N = 100000;
+    int N = 1000000;
     int *v;
     v = malloc(sizeof(int) * N);
     random_vector(v, N);
