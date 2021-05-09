@@ -3,8 +3,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <omp.h>
-#define tam_bucket 1000
-#define num_bucket 2000
+#define tam_bucket 10000
 #define max 10
 typedef struct
 {
@@ -15,6 +14,7 @@ void bucket_sort(int *v, int tam);
 void insertionSort(int *v, int N);
 
 int nt;
+int num_bucket;
 
 void bucket_sort(int *v, int tam)
 {
@@ -113,20 +113,21 @@ int main(int argc, char const *argv[])
 {
 
     int N;
-
-    if (argc == 3)
+    // size n_buckets threads
+    if (argc == 4)
     {
         N = atoi(argv[1]);
-        nt = atoi(argv[2]);
+        num_bucket = atoi(argv[2]);
+        nt = atoi(argv[3]);
     }
-    else if (argc > 3)
+    else if (argc > 4)
     {
         printf("Too many arguments supplied.\n");
         return 1;
     }
     else
     {
-        printf("Two arguments expected.\n");
+        printf("Three arguments expected.\n");
         return 1;
     }
     int *v;

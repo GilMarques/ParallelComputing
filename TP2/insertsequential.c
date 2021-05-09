@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #define tam_bucket 1000
-#define num_bucket 2000
+
 #define max 10
 typedef struct
 {
@@ -12,7 +12,7 @@ typedef struct
 } bucket;
 void bucket_sort(int *v, int tam);
 void insertionSort(int *v, int N);
-
+int num_bucket;
 void bucket_sort(int *v, int tam)
 {
     bucket *b = malloc(sizeof(bucket) * num_bucket);
@@ -106,18 +106,19 @@ int main(int argc, char const *argv[])
 {
 
     int N;
-    if (argc == 2)
+    if (argc == 3)
     {
         N = atoi(argv[1]);
+        num_bucket = atoi(argv[2]);
     }
-    else if (argc > 2)
+    else if (argc > 3)
     {
-        //printf("Too many arguments supplied.\n");
+        printf("Too many arguments supplied.\n");
         return 1;
     }
     else
     {
-        //printf("One argument expected.\n");
+        printf("One argument expected.\n");
         return 1;
     }
     int *v;
