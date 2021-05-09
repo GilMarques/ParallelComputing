@@ -2,7 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
-#define tam_bucket 1000
+#include <omp.h>
+#define tam_bucket 100000
 #define num_bucket 2000
 #define max 10
 typedef struct
@@ -10,10 +11,10 @@ typedef struct
     int topo;
     int *balde;
 } bucket;
-void bucket_sort(int *v, int tam);
-void insertionSort(int *v, int N);
-
-void bucket_sort(int *v, int tam)
+void bucket_sort(int v[], int tam);
+void quicksort(int v[], int p, int r);
+int nt;
+void bucket_sort(int v[], int tam)
 {
     bucket *b = malloc(sizeof(bucket) * num_bucket);
     int i, j, k;
@@ -23,19 +24,18 @@ void bucket_sort(int *v, int tam)
         b[i].balde = malloc(sizeof(int) * tam_bucket);
         b[i].topo = 0;
     }
-
     for (i = 0; i < tam; i++)
     {
-        int elem = v[i];
-        int x = elem / max;
-        b[x].balde[b[x].topo++] = elem;
+        int x = v[i] / max;
+        b[x].balde[b[x].topo++] = v[i];
     }
-
+#pragma omp parallel num_threads(nt)
+#pragma omp for private(i)
     for (i = 0; i < num_bucket; i++)
     {
         if (b[i].topo > 1)
         {
-            insertionSort(b[i].balde, b[i].topo);
+            quicksort(b[i].balde, 0, b[i].topo - 1);
         }
     }
 
@@ -48,30 +48,47 @@ void bucket_sort(int *v, int tam)
             i++;
         }
     }
-
-    /*int sum = 0;
-    for (j = 0; j < num_bucket; j++){
-        sum += b[j].topo;
-    }
-    printf("%d\n",sum/num_bucket);*/
 }
 
-void insertionSort(int *arr, int n)
+void swap(int *v, int i, int j)
 {
-    int i, key, j;
-    for (i = 1; i < n; i++)
-    {
-        key = arr[i];
-        j = i - 1;
-        while (j >= 0 && arr[j] > key)
+    int tmp;
+    tmp = v[i];
+    v[i] = v[j];
+    v[j] = tmp;
+}
+
+int partition(int A[], int p, int r)
+{
+    int x, i, j;
+    x = A[r];
+    i = p - 1;
+    for (j = p; j < r; j++)
+        if (A[j] <= x)
         {
-            arr[j + 1] = arr[j];
-            j = j - 1;
+            i++;
+            swap(A, i, j);
         }
-        arr[j + 1] = key;
+    swap(A, i + 1, r);
+    return i + 1;
+}
+
+void quicksort(int A[], int p, int r)
+{
+    if (p < r)
+    {
+        int q = partition(A, p, r);
+#pragma omp task
+        {
+            quicksort(A, p, q - 1);
+        }
+#pragma omp task
+        {
+            quicksort(A, q + 1, r);
+        }
     }
 }
-/*
+
 void print_array(int v[], int N)
 {
     int i;
@@ -80,7 +97,7 @@ void print_array(int v[], int N)
         printf("%d ", v[i]);
     }
     printf("\n");
-}*/
+}
 
 void random_vector(int *v, int N)
 {
@@ -106,18 +123,19 @@ int main(int argc, char const *argv[])
 {
 
     int N;
-    if (argc == 2)
+    if (argc == 3)
     {
         N = atoi(argv[1]);
+        nt = atoi(argv[2]);
     }
-    else if (argc > 2)
+    else if (argc > 3)
     {
-        //printf("Too many arguments supplied.\n");
+        printf("Too many arguments supplied.\n");
         return 1;
     }
     else
     {
-        //printf("One argument expected.\n");
+        printf("One argument expected.\n");
         return 1;
     }
     int *v;
@@ -128,7 +146,7 @@ int main(int argc, char const *argv[])
     bucket_sort(v, N);
 
     printf("Done!\n");
-    //printf("Is sorted? %s\n", is_sorted(v, N));
+    printf("Is sorted? %s\n", is_sorted(v, N));
     //printf("Sorted:\n");
     //print_array(v, N);
     return 0;

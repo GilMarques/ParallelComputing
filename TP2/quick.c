@@ -2,8 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
-#include "papi.h"
-#define tam_bucket 1000
+#define tam_bucket 100000
 #define num_bucket 2000
 #define max 10
 typedef struct
@@ -19,16 +18,16 @@ void bucket_sort(int v[], int tam)
     bucket *b = malloc(sizeof(bucket) * num_bucket);
     int i, j, k;
 
-    for (i = 0; i < num_bucket; i++){
+    for (i = 0; i < num_bucket; i++)
+    {
         b[i].balde = malloc(sizeof(int) * tam_bucket);
         b[i].topo = 0;
-}
+    }
     for (i = 0; i < tam; i++)
     {
         int x = v[i] / max;
         b[x].balde[b[x].topo++] = v[i];
     }
-
 
     for (i = 0; i < num_bucket; i++)
     {
@@ -135,20 +134,8 @@ int main(int argc, char const *argv[])
     random_vector(v, N);
     //printf("Original:\n");
     //print_array(v, N);
-    int retval;
-    retval = PAPI_hl_region_begin("computation");
-    if (retval != PAPI_OK)
-    {
-        printf("Error Begin\n");
-        return 1;
-    }
     bucket_sort(v, N);
-    retval = PAPI_hl_region_end("computation");
-    if (retval != PAPI_OK)
-    {
-        printf("Error End\n");
-        return 1;
-    }
+
     printf("Done!\n");
     printf("Is sorted? %s\n", is_sorted(v, N));
     //printf("Sorted:\n");

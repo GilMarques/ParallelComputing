@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <omp.h>
 #define tam_bucket 1000
 #define num_bucket 2000
 #define max 10
@@ -12,6 +13,8 @@ typedef struct
 } bucket;
 void bucket_sort(int *v, int tam);
 void insertionSort(int *v, int N);
+
+int nt;
 
 void bucket_sort(int *v, int tam)
 {
@@ -28,9 +31,12 @@ void bucket_sort(int *v, int tam)
     {
         int elem = v[i];
         int x = elem / max;
-        b[x].balde[b[x].topo++] = elem;
+        {
+            b[x].balde[b[x].topo++] = elem;
+        }
     }
-
+#pragma omp parallel num_threads(nt)
+#pragma omp for private(i)
     for (i = 0; i < num_bucket; i++)
     {
         if (b[i].topo > 1)
@@ -40,6 +46,7 @@ void bucket_sort(int *v, int tam)
     }
 
     i = 0;
+
     for (j = 0; j < num_bucket; j++)
     {
         for (k = 0; k < b[j].topo; k++)
@@ -106,18 +113,20 @@ int main(int argc, char const *argv[])
 {
 
     int N;
-    if (argc == 2)
+
+    if (argc == 3)
     {
         N = atoi(argv[1]);
+        nt = atoi(argv[2]);
     }
-    else if (argc > 2)
+    else if (argc > 3)
     {
-        //printf("Too many arguments supplied.\n");
+        printf("Too many arguments supplied.\n");
         return 1;
     }
     else
     {
-        //printf("One argument expected.\n");
+        printf("Two arguments expected.\n");
         return 1;
     }
     int *v;
@@ -128,7 +137,7 @@ int main(int argc, char const *argv[])
     bucket_sort(v, N);
 
     printf("Done!\n");
-    //printf("Is sorted? %s\n", is_sorted(v, N));
+    printf("Is sorted? %s\n", is_sorted(v, N));
     //printf("Sorted:\n");
     //print_array(v, N);
     return 0;
