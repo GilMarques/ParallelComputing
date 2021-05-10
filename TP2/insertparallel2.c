@@ -142,8 +142,8 @@ int main(int argc, char const *argv[])
     //print_array(v, N);
     bucket_sort(v, N);
 
-    printf("Done!\n");
-    printf("Is sorted? %s\n", is_sorted(v, N));
+    printf("Done Insert Parallel2!\n");
+    //printf("Is sorted? %s\n", is_sorted(v, N));
     //printf("Sorted:\n");
     //print_array(v, N);
     return 0;
