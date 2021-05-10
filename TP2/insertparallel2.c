@@ -32,7 +32,7 @@ void bucket_sort(int *v, int tam)
             b[i].topo = 0;
             
         }
-        #pragma omp barrier
+        
         
         #pragma omp for private(i)
         for (i = 0; i < tam; i++)
@@ -43,7 +43,7 @@ void bucket_sort(int *v, int tam)
             b[x].balde[b[x].topo++] = elem;
             omp_unset_lock(&(b[x].lock));
         }
-        #pragma omp barrier
+        
         #pragma omp for private(i)
         for (i = 0; i < num_bucket; i++)
         {
