@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
-#define tam_bucket 100000
+
 
 #define max 10
 typedef struct
@@ -13,6 +13,7 @@ typedef struct
 void bucket_sort(int v[], int tam);
 void quicksort(int v[], int p, int r);
 int num_bucket;
+int tam_bucket;
 void bucket_sort(int v[], int tam)
 {
     bucket *b = malloc(sizeof(bucket) * num_bucket);
@@ -119,6 +120,7 @@ int main(int argc, char const *argv[])
     {
         N = atoi(argv[1]);
         num_bucket = atoi(argv[2]);
+        tam_bucket = (N/num_bucket) * 10;
     }
     else if (argc > 3)
     {

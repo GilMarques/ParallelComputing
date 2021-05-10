@@ -3,19 +3,21 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <omp.h>
-#define tam_bucket 1000
-#define num_bucket 2000
+
+
 #define max 10
 typedef struct
 {
+    omp_lock_t lock;
     int topo;
     int *balde;
 } bucket;
 void bucket_sort(int *v, int tam);
 void insertionSort(int *v, int N);
-
+void print_array(int *v, int N);
+int num_bucket;
 int nt;
-
+int tam_bucket;
 void bucket_sort(int *v, int tam)
 {
     bucket *b = malloc(sizeof(bucket) * num_bucket);
@@ -25,19 +27,21 @@ void bucket_sort(int *v, int tam)
         #pragma omp for private(i)
         for (i = 0; i < num_bucket; i++)
         {
+            omp_init_lock(&(b[i].lock));
             b[i].balde = malloc(sizeof(int) * tam_bucket);
             b[i].topo = 0;
+            
         }
         #pragma omp barrier
+        
         #pragma omp for private(i)
         for (i = 0; i < tam; i++)
         {
             int elem = v[i];
             int x = elem / max;
-            {
-                #pragma omp critical
-                b[x].balde[b[x].topo++] = elem;
-            }
+            omp_set_lock(&(b[x].lock));
+            b[x].balde[b[x].topo++] = elem;
+            omp_unset_lock(&(b[x].lock));
         }
         #pragma omp barrier
         #pragma omp for private(i)
@@ -48,9 +52,10 @@ void bucket_sort(int *v, int tam)
                 insertionSort(b[i].balde, b[i].topo);
             }
         }
+        
+    }
         i = 0;
-        #pragma omp barrier
-        #pragma omp master
+
         for (j = 0; j < num_bucket; j++)
         {
             for (k = 0; k < b[j].topo; k++)
@@ -59,7 +64,7 @@ void bucket_sort(int *v, int tam)
                 i++;
             }
         }
-    }
+    
 }
 
 void insertionSort(int *arr, int n)
@@ -77,7 +82,7 @@ void insertionSort(int *arr, int n)
         arr[j + 1] = key;
     }
 }
-/*
+
 void print_array(int v[], int N)
 {
     int i;
@@ -86,7 +91,7 @@ void print_array(int v[], int N)
         printf("%d ", v[i]);
     }
     printf("\n");
-}*/
+}
 
 void random_vector(int *v, int N)
 {
@@ -113,19 +118,21 @@ int main(int argc, char const *argv[])
 
     int N;
 
-    if (argc == 3)
+    if (argc == 4)
     {
         N = atoi(argv[1]);
-        nt = atoi(argv[2]);
+        num_bucket = atoi(argv[2]);
+        nt = atoi(argv[3]);
+        tam_bucket = (N/num_bucket) * 10;
     }
-    else if (argc > 3)
+    else if (argc > 4)
     {
         printf("Too many arguments supplied.\n");
         return 1;
     }
     else
     {
-        printf("Two arguments expected.\n");
+        printf("Three arguments expected.\n");
         return 1;
     }
     int *v;
