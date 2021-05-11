@@ -20,13 +20,19 @@ void bucket_sort(int *v, int tam)
 {
     bucket *b = malloc(sizeof(bucket) * num_bucket);
     int i, j, k;
+    double start,end;
 
+    start = omp_get_wtime(); 
     for (i = 0; i < num_bucket; i++)
     {
         b[i].balde = malloc(sizeof(int) * tam_bucket);
         b[i].topo = 0;
     }
 
+    end = omp_get_wtime(); 
+    printf("Time init: %lf\n",end-start);
+
+    start = omp_get_wtime(); 
     for (i = 0; i < tam; i++)
     {
         int elem = v[i];
@@ -35,8 +41,17 @@ void bucket_sort(int *v, int tam)
             b[x].balde[b[x].topo++] = elem;
         }
     }
+
+    end = omp_get_wtime(); 
+    printf("Time dist: %lf\n",end-start);
+
 #pragma omp parallel num_threads(nt)
-#pragma omp for private(i)
+{
+    #pragma omp master
+        {
+        start = omp_get_wtime(); 
+        }
+#pragma omp for
     for (i = 0; i < num_bucket; i++)
     {
         if (b[i].topo > 1)
@@ -44,7 +59,13 @@ void bucket_sort(int *v, int tam)
             insertionSort(b[i].balde, b[i].topo);
         }
     }
-
+    #pragma omp master
+    {
+        end = omp_get_wtime(); 
+        printf("Time sort: %lf\n",end-start);
+    }
+}
+    start = omp_get_wtime();
     i = 0;
 
     for (j = 0; j < num_bucket; j++)
@@ -55,6 +76,8 @@ void bucket_sort(int *v, int tam)
             i++;
         }
     }
+    end = omp_get_wtime(); 
+    printf("Time copy: %lf\n",end-start);
 
     /*int sum = 0;
     for (j = 0; j < num_bucket; j++){

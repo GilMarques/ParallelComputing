@@ -4,6 +4,8 @@ run:
 	@gcc -O2 -g  quickparallel.c -std=c99 -fopenmp -o quickparallel
 	@gcc -O2 -g  insertparallel.c -std=c99 -fopenmp -o insertparallel
 	@gcc -O2 -g  insertparallel2.c -std=c99 -fopenmp -o insertparallel2
+	@gcc -O2 -g  insertparallel3.c -std=c99 -fopenmp -o insertparallel3
+	@gcc -O2 -g  insertparallel4.c -std=c99 -fopenmp -o insertparallel4
 	@gcc -O2 -g  quickparallel2.c -std=c99 -fopenmp -o quickparallel2
 	
 

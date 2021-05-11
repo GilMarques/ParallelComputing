@@ -23,13 +23,11 @@ void bucket_sort(int *v, int tam)
     bucket *b = malloc(sizeof(bucket) * num_bucket);
     int i, j, k;
     double start,end;
-#pragma omp parallel num_threads(nt)
-    {
-        #pragma omp master
-        {
+
+        
         start = omp_get_wtime(); 
-        }
-        #pragma omp for 
+       
+        
         for (i = 0; i < num_bucket; i++)
         {
             omp_init_lock(&(b[i].lock));
@@ -37,13 +35,13 @@ void bucket_sort(int *v, int tam)
             b[i].topo = 0;
             
         }
-        #pragma omp master
-        {
+        
         end = omp_get_wtime(); 
         printf("Time init: %lf\n",end-start);
-        }
-
         
+
+        #pragma omp parallel num_threads(nt)
+    {
         
         #pragma omp master
         {
@@ -175,7 +173,7 @@ int main(int argc, char const *argv[])
     //print_array(v, N);
     bucket_sort(v, N);
 
-    printf("Done Insert Parallel2!\n");
+    //printf("Done Insert Parallel2!\n");
     //printf("Is sorted? %s\n", is_sorted(v, N));
     //printf("Sorted:\n");
     //print_array(v, N);

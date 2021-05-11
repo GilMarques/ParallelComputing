@@ -31,6 +31,14 @@ for i in range(3):
             for n_threads in range(2, 33, 2):
                     os.system('perf stat -o %s/out_insert_parallel2.txt --append ./insertparallel2 %d %d %d' %
                             (folder, size, n_buckets, n_threads))
+            
+            for n_threads in range(2, 33, 2):
+                    os.system('perf stat -o %s/out_insert_parallel3.txt --append ./insertparallel3 %d %d %d' %
+                            (folder, size, n_buckets, n_threads))
+
+            for n_threads in range(2, 33, 2):
+                    os.system('./insertparallel3 %d %d %d >> %s/out_times' %
+                            (size, n_buckets, n_threads,folder))                
             n_buckets = n_buckets*10
         n_buckets = 1000
         size = size*10
