@@ -16,23 +16,17 @@ void insertionSort(int *v, int N);
 int nt;
 int num_bucket;
 int tam_bucket;
+
 void bucket_sort(int *v, int tam)
 {
     bucket *b = malloc(sizeof(bucket) * num_bucket);
     int i, j, k;
-    double start,end;
-
-    start = omp_get_wtime(); 
     for (i = 0; i < num_bucket; i++)
     {
         b[i].balde = malloc(sizeof(int) * tam_bucket);
         b[i].topo = 0;
     }
 
-    end = omp_get_wtime(); 
-    printf("Time init: %lf\n",end-start);
-
-    start = omp_get_wtime(); 
     for (i = 0; i < tam; i++)
     {
         int elem = v[i];
@@ -42,30 +36,19 @@ void bucket_sort(int *v, int tam)
         }
     }
 
-    end = omp_get_wtime(); 
-    printf("Time dist: %lf\n",end-start);
-
 #pragma omp parallel num_threads(nt)
-{
-    #pragma omp master
-        {
-        start = omp_get_wtime(); 
-        }
-#pragma omp for
-    for (i = 0; i < num_bucket; i++)
     {
-        if (b[i].topo > 1)
+
+        #pragma omp for
+        for (i = 0; i < num_bucket; i++)
         {
-            insertionSort(b[i].balde, b[i].topo);
+            if (b[i].topo > 1)
+            {
+                insertionSort(b[i].balde, b[i].topo);
+            }
         }
     }
-    #pragma omp master
-    {
-        end = omp_get_wtime(); 
-        printf("Time sort: %lf\n",end-start);
-    }
-}
-    start = omp_get_wtime();
+
     i = 0;
 
     for (j = 0; j < num_bucket; j++)
@@ -76,8 +59,6 @@ void bucket_sort(int *v, int tam)
             i++;
         }
     }
-    end = omp_get_wtime(); 
-    printf("Time copy: %lf\n",end-start);
 
     /*int sum = 0;
     for (j = 0; j < num_bucket; j++){
@@ -137,12 +118,14 @@ int main(int argc, char const *argv[])
 
     int N;
     // size n_buckets threads
+    
     if (argc == 4)
     {
         N = atoi(argv[1]);
         num_bucket = atoi(argv[2]);
         nt = atoi(argv[3]);
-        tam_bucket = (N/num_bucket) * 10;
+        tam_bucket = (N / num_bucket) * 10;
+        
     }
     else if (argc > 4)
     {
@@ -159,9 +142,11 @@ int main(int argc, char const *argv[])
     random_vector(v, N);
     //printf("Original:\n");
     //print_array(v, N);
+    
     bucket_sort(v, N);
+    
 
-    printf("Done Insert Parallel!\n");
+    //printf("Done Insert Parallel!\n");
     //printf("Insert Parallel Is sorted? %s\n", is_sorted(v, N));
     //printf("Sorted:\n");
     //print_array(v, N);

@@ -130,7 +130,7 @@ int main(int argc, char const *argv[])
     //print_array(v, N);
     bucket_sort(v, N);
 
-    printf("Done Insert Sequential!\n");
+    //printf("Done Insert Sequential!\n");
    // printf("Insert Sequential Is sorted? %s\n", is_sorted(v, N));
     //printf("Sorted:\n");
     //print_array(v, N);
