@@ -4,7 +4,6 @@
 #include <limits.h>
 #include <omp.h>
 
-
 #define max 10
 typedef struct
 {
@@ -22,20 +21,17 @@ void bucket_sort(int *v, int tam)
 {
     bucket *b = malloc(sizeof(bucket) * num_bucket);
     int i, j, k;
-        
-        
-        for (i = 0; i < num_bucket; i++)
-        {
-            omp_init_lock(&(b[i].lock));
-            b[i].balde = malloc(sizeof(int) * tam_bucket);
-            b[i].topo = 0;
-            
-        }
-        
-        #pragma omp parallel num_threads(nt)
+
+    for (i = 0; i < num_bucket; i++)
     {
-        
-        
+        omp_init_lock(&(b[i].lock));
+        b[i].balde = malloc(sizeof(int) * tam_bucket);
+        b[i].topo = 0;
+    }
+
+    #pragma omp parallel num_threads(nt)
+    {
+
         #pragma omp for
         for (i = 0; i < tam; i++)
         {
@@ -45,7 +41,6 @@ void bucket_sort(int *v, int tam)
             b[x].balde[b[x].topo++] = elem;
             omp_unset_lock(&(b[x].lock));
         }
-        
 
         #pragma omp for
         for (i = 0; i < num_bucket; i++)
@@ -55,19 +50,17 @@ void bucket_sort(int *v, int tam)
                 insertionSort(b[i].balde, b[i].topo);
             }
         }
-        
     }
-        
-        i = 0;
 
-        for (j = 0; j < num_bucket; j++)
+    i = 0;
+    for (j = 0; j < num_bucket; j++)
+    {
+        for (k = 0; k < b[j].topo; k++)
         {
-            for (k = 0; k < b[j].topo; k++)
-            {
-                v[i] = b[j].balde[k];
-                i++;
-            }
-        }    
+            v[i] = b[j].balde[k];
+            i++;
+        }
+    }
 }
 
 void insertionSort(int *arr, int n)
@@ -126,7 +119,7 @@ int main(int argc, char const *argv[])
         N = atoi(argv[1]);
         num_bucket = atoi(argv[2]);
         nt = atoi(argv[3]);
-        tam_bucket = (N/num_bucket) * 10;
+        tam_bucket = (N / num_bucket) * 10;
     }
     else if (argc > 4)
     {
