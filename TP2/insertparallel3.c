@@ -107,7 +107,7 @@ void bucket_sort(int *v, int tam)
 #pragma omp parallel num_threads(nt)
     {
 
-#pragma omp for
+        #pragma omp for
         for (i = 0; i < tam; i++)
         {
             int elem = v[i];
@@ -117,7 +117,7 @@ void bucket_sort(int *v, int tam)
             omp_unset_lock(&(b[x].lock));
         }
 
-#pragma omp for
+        #pragma omp for
         for (i = 0; i < num_bucket; i++)
         {
             if (b[i].topo > 1)
