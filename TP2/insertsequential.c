@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <limits.h>
 
-
 #define max 10
 typedef struct
 {
@@ -49,12 +48,6 @@ void bucket_sort(int *v, int tam)
             i++;
         }
     }
-
-    /*int sum = 0;
-    for (j = 0; j < num_bucket; j++){
-        sum += b[j].topo;
-    }
-    printf("%d\n",sum/num_bucket);*/
 }
 
 void insertionSort(int *arr, int n)
@@ -72,16 +65,6 @@ void insertionSort(int *arr, int n)
         arr[j + 1] = key;
     }
 }
-/*
-void print_array(int v[], int N)
-{
-    int i;
-    for (i = 0; i < N; i++)
-    {
-        printf("%d ", v[i]);
-    }
-    printf("\n");
-}*/
 
 void random_vector(int *v, int N)
 {
@@ -111,7 +94,7 @@ int main(int argc, char const *argv[])
     {
         N = atoi(argv[1]);
         num_bucket = atoi(argv[2]);
-        tam_bucket = (N/num_bucket) * 10;
+        tam_bucket = (N / num_bucket) * 10;
     }
     else if (argc > 3)
     {
@@ -126,13 +109,6 @@ int main(int argc, char const *argv[])
     int *v;
     v = malloc(sizeof(int) * N);
     random_vector(v, N);
-    //printf("Original:\n");
-    //print_array(v, N);
     bucket_sort(v, N);
-
-    //printf("Done Insert Sequential!\n");
-   // printf("Insert Sequential Is sorted? %s\n", is_sorted(v, N));
-    //printf("Sorted:\n");
-    //print_array(v, N);
     return 0;
 }

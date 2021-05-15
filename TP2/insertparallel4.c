@@ -134,13 +134,6 @@ int main(int argc, char const *argv[])
     int *v;
     v = malloc(sizeof(int) * N);
     random_vector(v, N);
-    //printf("Original:\n");
-    //print_array(v, N);
     bucket_sort(v, N);
-
-    printf("Done Insert Parallel2!\n");
-    //printf("Is sorted? %s\n", is_sorted(v, N));
-    //printf("Sorted:\n");
-    //print_array(v, N);
     return 0;
 }
